@@ -9,9 +9,9 @@ import matplotlib.pyplot as plt
 
 # variables
 try:
-    mod = float(input('modulus [MPa] (default = 0.2 MPa): '))*10**6
+    E = float(input('modulus [MPa] (default = 0.2 MPa): '))*10**6
 except ValueError:
-    mod = 2*10**5             # [Pa] modulus
+    E = 2*10**5             # [Pa] modulus
 
 # initial condition
 try:
@@ -30,7 +30,7 @@ ones = np.ones(len(t_a))
 s = np.concatenate([zeros,ones*s_i])
 
 # solution of ODE（ここではそれをする必要はない）
-e = s/mod
+e = s/E
 
 # scaling for figure
 s = s/10**6                     # MPaスケール
@@ -40,7 +40,7 @@ ax1 = fig.add_subplot(111, xlabel='$t$ /s')
 ax2 = ax1.twinx()
 ax1.grid()
 ax2.grid(ls='dotted')
-title_text = "spring (Hooke's elasticity): step stress, $\sigma_0$ = {0:.1f} MPa".format(s_i/10**6)
+title_text = "spring (Hooke's elasticity): step stress"
 ax1.set_title(title_text)
 ax1.set_axisbelow(True)
 ax2.set_axisbelow(True)
@@ -49,7 +49,7 @@ ax2.set_ylabel('stress, $\sigma$')
 ax1.set_ylim(-0.1*np.max(e),1.5*np.max(e))
 ax2.set_ylim(-0.1*np.max(s),1.5*np.max(s))
 
-var_text = r'$\sigma_0$ = {0:.1f} MPa, $E$ = {1:.1f} MPa'.format(s_i/10**6,mod/10**6)
+var_text = r'$\sigma_0$ = {0:.1f} MPa, $E$ = {1:.1f} MPa'.format(s_i/10**6,E/10**6)
 ax1.text(0.1, 0.9, var_text, transform=ax1.transAxes)
 eq_text = r'$\epsilon$ = $\sigma_0/E$'
 ax1.text(0.1, 0.8, eq_text, transform=ax1.transAxes)
@@ -59,7 +59,7 @@ ax1.legend(loc='upper right')
 ax2.plot(t, s, 'r', label='$\sigma$ (input)')
 ax2.legend(loc='lower right')
 
-savefile = "./png/spring_stepStress_(mod={0:.1f}M,sigma={1:.1f}M).png".format(mod/10**6,s_i/10**6)
+savefile = "./png/spring_stepStress_(sigma={0:.1f}MPa,mod={1:.1f}MPa).png".format(s_i/10**6,E/10**6)
 fig.savefig(savefile, dpi=300)
 
 plt.show()
