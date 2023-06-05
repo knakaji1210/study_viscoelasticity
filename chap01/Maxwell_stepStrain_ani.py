@@ -59,7 +59,7 @@ s = s/10**6                     # MPaスケール
 fig = plt.figure(figsize=(8,5))
 ax = fig.add_subplot(111, xlabel='$t$ /s')
 ax.grid()
-title_text = "Maxwell model: step stress"
+title_text = "Maxwell model: step strain"
 ax.set_title(title_text)
 ax.set_axisbelow(True)
 ax.set_xlabel('$x$ position [m]')

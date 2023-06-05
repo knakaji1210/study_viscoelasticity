@@ -65,11 +65,15 @@ ax.plot(x_d1,y_d2, c='b')
 ax.plot([l/4,l/4],[w,-w], c='b')
 rect = patches.Rectangle(xy=(l/4, -w), width=2*l/3, height=2*w, facecolor='y')
 ax.add_patch(rect)
+ax.plot([0,l],[-2,-2], c='g')
+ax.plot([0,0],[-1.8,-2.2], c='g')
+ax.plot([l,l],[-1.8,-2.2], c='g')
 
 var_text = r'$\sigma_0$ = {0:.1f} MPa, $\eta$ = {1:.1f} kPa s'.format(s_i/10**6,eta/10**3)
 ax.text(0.6, 0.9, var_text, transform=ax.transAxes)
 eq_text = r'd$\epsilon$/d$t$ = $\sigma_0$/$\eta$'
 ax.text(0.6, 0.8, eq_text, transform=ax.transAxes)
+ax.text(0.3, 0.25, '$l_0$', transform=ax.transAxes)
 
 # for dashpot
 rod, = ax.plot([],[], 'b', animated=True)

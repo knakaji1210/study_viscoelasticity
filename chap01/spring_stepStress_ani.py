@@ -54,11 +54,15 @@ ax.set_ylim(-5,5)
 y_0 = [0, 0]
 ax.plot([0, l/4],y_0, c='b')
 ax.plot(0,0, 'ro', markersize='10')
+ax.plot([0,l],[-2,-2], c='g')
+ax.plot([0,0],[-1.8,-2.2], c='g')
+ax.plot([l,l],[-1.8,-2.2], c='g')
 
 var_text = r'$\sigma_0$ = {0:.1f} MPa, $E$ = {1:.1f} MPa'.format(s_i/10**6,E/10**6)
 ax.text(0.6, 0.9, var_text, transform=ax.transAxes)
 eq_text = r'$\epsilon$ = $\sigma_0/E$'
 ax.text(0.6, 0.8, eq_text, transform=ax.transAxes)
+ax.text(0.3, 0.25, '$l_0$', transform=ax.transAxes)
 
 # for spring
 rod, = ax.plot([],[], 'b', animated=True)

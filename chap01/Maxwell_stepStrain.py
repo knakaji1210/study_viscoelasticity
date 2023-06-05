@@ -50,7 +50,7 @@ e_d = integral_s/eta                              # strain on dashpot
 s = s/10**6                     # MPaスケール
 
 fig = plt.figure(figsize=(8,8))
-title_text = "Maxwell model: step stress"
+title_text = "Maxwell model: step strain"
 fig.suptitle(title_text)
 ax1 = fig.add_subplot(211, xlabel='$t$ /s')
 ax2 = fig.add_subplot(212, xlabel='$t$ /s')
@@ -71,11 +71,11 @@ tau = eta/E
 res_text = r'$\tau$ = {0:.1f} s'.format(tau)
 ax2.text(0.1, 0.8, res_text, transform=ax2.transAxes)
 
-ax1.plot(t, e, 'r', label='$\epsilon$ (input)')
+ax1.plot(t, e, 'b', label='$\epsilon$ (input)')
 ax1.plot(t, e_s, 'g', ls="dashed", label='$\epsilon$ (spring)')
 ax1.plot(t, e_d, 'y', ls="dashed", label='$\epsilon$ (dashpot)')
 ax1.legend(loc='upper right')
-ax2.plot(t, s, 'b', label='$\sigma$ (output)')
+ax2.plot(t, s, 'r', label='$\sigma$ (output)')
 ax2.legend(loc='upper right')
 
 savefile = "./png/Maxwell_stepStrain_(epsilon={0:.2f},mod={1:.1f}MPa,eta={2:.1f}kPas).png".format(e_i,E/10**6,eta/10**3)
