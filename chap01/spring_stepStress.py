@@ -17,11 +17,11 @@ except ValueError:
 try:
     s_i = float(input('step stress [MPa] (default = 0.1 MPa): '))*10**6
 except ValueError:
-    s_i = 10**5             # [Pa] stepp stress
+    s_i = 10**5             # [Pa] step stress
 e0 = 0                      # [] initial strain
 
 tmax = 2                    # [s] duration time
-dt = 0.05                   # [s] interval time
+dt = 0.01                   # [s] interval time
 t_a = np.arange(0, tmax, dt)    # time after step stress
 t_b = np.arange(-0.5*tmax,0,dt) # time before step stress
 t = np.concatenate([t_b,t_a])   # whole time 
@@ -35,31 +35,31 @@ e = s/E
 # scaling for figure
 s = s/10**6                     # MPaスケール
 
-fig = plt.figure(figsize=(8,5))
-ax1 = fig.add_subplot(111, xlabel='$t$ /s')
-ax2 = ax1.twinx()
-ax1.grid()
-ax2.grid(ls='dotted')
+fig = plt.figure(figsize=(8,8))
 title_text = "spring (Hooke's elasticity): step stress"
-ax1.set_title(title_text)
+fig.suptitle(title_text)
+ax1 = fig.add_subplot(211, xlabel='$t$ /s')
+ax2 = fig.add_subplot(212, xlabel='$t$ /s')
+ax1.grid()
+ax2.grid()
 ax1.set_axisbelow(True)
 ax2.set_axisbelow(True)
-ax1.set_ylabel('strain, $\epsilon$')
-ax2.set_ylabel('stress, $\sigma$')
-ax1.set_ylim(-0.1*np.max(e),1.5*np.max(e))
-ax2.set_ylim(-0.1*np.max(s),1.5*np.max(s))
+ax1.set_ylabel('stress, $\sigma$')
+ax2.set_ylabel('strain, $\epsilon$')
+ax1.set_ylim(-0.1*np.max(s),1.5*np.max(s))
+ax2.set_ylim(-0.1*np.max(e),1.5*np.max(e))
 
 var_text = r'$\sigma_0$ = {0:.1f} MPa, $E$ = {1:.1f} MPa'.format(s_i/10**6,E/10**6)
 ax1.text(0.1, 0.9, var_text, transform=ax1.transAxes)
 eq_text = r'$\epsilon$ = $\sigma_0/E$'
-ax1.text(0.1, 0.8, eq_text, transform=ax1.transAxes)
+ax2.text(0.1, 0.9, eq_text, transform=ax2.transAxes)
 
-ax1.plot(t, e, 'b', label='$\epsilon$ (output)')
+ax1.plot(t, s, 'r', label='$\sigma$ (input)')
 ax1.legend(loc='upper right')
-ax2.plot(t, s, 'r', label='$\sigma$ (input)')
-ax2.legend(loc='lower right')
+ax2.plot(t, e, 'b', label='$\epsilon$ (output)')
+ax2.legend(loc='upper right')
 
-savefile = "./png/spring_stepStress_(sigma={0:.1f}MPa,mod={1:.1f}MPa).png".format(s_i/10**6,E/10**6)
+savefile = "./png/spring_stepStress_(sigma={0:.2f}MPa,mod={1:.1f}MPa).png".format(s_i/10**6,E/10**6)
 fig.savefig(savefile, dpi=300)
 
 plt.show()

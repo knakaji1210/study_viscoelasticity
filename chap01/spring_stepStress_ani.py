@@ -21,7 +21,7 @@ w = 0.5                     # ratio of spring width
 try:
     s_i = float(input('step stress [MPa] (default = 0.1 MPa): '))*10**6
 except ValueError:
-    s_i = 10**5             # [Pa] stepp stress
+    s_i = 10**5             # [Pa] step stress
 e0 = 0                      # [] initial strain
 
 tmax = 2                    # [s] duration time
@@ -91,7 +91,7 @@ fps = 1000/frame_int        # frames per second
 ani = FuncAnimation(fig, update, frames=f, 
                     init_func=init, blit=True, interval=frame_int, repeat=False)
 
-savefile = "./gif/spring_stepStress_(sigma={0:.1f}MPa,mod={1:.1f}MPa).png".format(s_i/10**6,E/10**6)
+savefile = "./gif/spring_stepStress_(sigma={0:.2f}MPa,mod={1:.1f}MPa).gif".format(s_i/10**6,E/10**6)
 ani.save(savefile, writer='pillow', fps=fps)
 
 plt.show()
