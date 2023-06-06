@@ -63,7 +63,7 @@ ax2.grid()
 ax1.set_axisbelow(True)
 ax2.set_axisbelow(True)
 ax1.set_ylabel('strain, $\epsilon$')
-ax2.set_ylabel('stress, $\sigma$')
+ax2.set_ylabel('stress, $\sigma$ /MPa')
 ax1.set_ylim(-0.1*np.max(e),1.5*np.max(e))
 ax2.set_ylim(-0.1*np.max(s),1.5*np.max(s))
 
