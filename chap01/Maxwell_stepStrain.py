@@ -9,6 +9,8 @@ import matplotlib.pyplot as plt
 '''
 
 def Maxwell(s, t, E, eta):
+# e: strain, s: stress, E: modulus, eta: viscosity
+# ステップ歪みe=e0を加えるので、式(1.11)のde/dtの項が0となっている
     tau = eta/E                 # retardation time [s]
     dsdt = -s/tau               # (1.12)
     return dsdt
@@ -23,12 +25,14 @@ try:
 except ValueError:
     eta = 5*10**5               # [Pa s] viscosity
 
+tau = eta/E
+
 # initial condition
 try:
-    e_i = float(input('step strain [] (default = 0.4): '))
+    e0 = float(input('step strain [] (default = 0.4): '))
 except ValueError:
-    e_i = 0.4               # [] step strain
-s0 = E*e_i                  # [Pa] initial stress
+    e0 = 0.4               # [] step strain
+s0 = E*e0                  # [Pa] initial stress
 
 tmax = 10                   # [s] duration time
 dt = 0.01                   # [s] interval time
@@ -37,7 +41,7 @@ t_b = np.arange(-0.1*tmax,0,dt) # time before step stress
 t = np.concatenate([t_b,t_a])   # whole time 
 zeros = np.zeros(len(t_b))
 ones = np.ones(len(t_a))
-e = np.concatenate([zeros,ones*e_i])
+e = np.concatenate([zeros,ones*e0])
 
 # solution of ODE
 sol = odeint(Maxwell, s0, t_a, args=(E,eta))
@@ -63,11 +67,10 @@ ax2.set_ylabel('stress, $\sigma$')
 ax1.set_ylim(-0.1*np.max(e),1.5*np.max(e))
 ax2.set_ylim(-0.1*np.max(s),1.5*np.max(s))
 
-var_text = r'$\epsilon_0$ = {0:.1f}, $E$ = {1:.1f} MPa, $\eta$ = {2:.1f} kPa s'.format(e_i,E/10**6,eta/10**3)
+var_text = r'$\epsilon_0$ = {0:.1f}, $E$ = {1:.1f} MPa, $\eta$ = {2:.1f} kPa s'.format(e0,E/10**6,eta/10**3)
 ax1.text(0.1, 0.9, var_text, transform=ax1.transAxes)
 eq_text = r'd$\sigma$/d$t$ = -$\sigma$/$\tau$'
 ax2.text(0.1, 0.9, eq_text, transform=ax2.transAxes)
-tau = eta/E
 res_text = r'$\tau$ = {0:.1f} s'.format(tau)
 ax2.text(0.1, 0.8, res_text, transform=ax2.transAxes)
 
@@ -78,7 +81,7 @@ ax1.legend(loc='upper right')
 ax2.plot(t, s, 'r', label='$\sigma$ (output)')
 ax2.legend(loc='upper right')
 
-savefile = "./png/Maxwell_stepStrain_(epsilon={0:.2f},mod={1:.1f}MPa,eta={2:.1f}kPas).png".format(e_i,E/10**6,eta/10**3)
+savefile = "./png/Maxwell_stepStrain_(epsilon={0:.2f},mod={1:.1f}MPa,eta={2:.1f}kPas).png".format(e0,E/10**6,eta/10**3)
 fig.savefig(savefile, dpi=300)
 
 plt.show()

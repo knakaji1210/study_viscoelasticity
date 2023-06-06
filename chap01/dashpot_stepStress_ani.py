@@ -6,8 +6,14 @@ import matplotlib.pyplot as plt
 from matplotlib import patches
 from matplotlib.animation import FuncAnimation
 
+'''
+テキストの式(1.5)をベースに組み立てる
+'''
+
 def dashpot(e, t, s, eta):
-    dedt = s/eta        # e: strain, s: step stress, eta: viscosity
+# e: strain, s: stress, eta: viscosity
+# ここでは下でargsとしてs=s0を入れてステップ応力を実現
+    dedt = s/eta        # (1.21)
     return dedt
 
 # variables
@@ -20,9 +26,9 @@ w = 0.5                     # ratio of dashpot width
 
 # initial condition
 try:
-    s_i = float(input('step stress [MPa] (default = 0.1 MPa): '))*10**6
+    s0 = float(input('step stress [MPa] (default = 0.1 MPa): '))*10**6
 except ValueError:
-    s_i = 10**5             # [Pa] step stress
+    s0 = 10**5             # [Pa] step stress
 e0 = 0                      # [] initial strain
 
 tmax = 2                    # [s] duration time
@@ -32,10 +38,10 @@ t_b = np.arange(-0.5*tmax,0,dt) # time before step stress
 t = np.concatenate([t_b,t_a])   # whole time 
 zeros = np.zeros(len(t_b))
 ones = np.ones(len(t_a))
-s = np.concatenate([zeros,ones*s_i])
+s = np.concatenate([zeros,ones*s0])
 
 # solution of ODE
-sol = odeint(dashpot, e0, t_a, args=(s_i,eta))
+sol = odeint(dashpot, e0, t_a, args=(s0,eta))
 e = np.concatenate([zeros,sol[:,0]])            # [] strain
 el = e*l                                        # [m] elongation
 
@@ -69,10 +75,10 @@ ax.plot([0,l],[-2,-2], c='g')
 ax.plot([0,0],[-1.8,-2.2], c='g')
 ax.plot([l,l],[-1.8,-2.2], c='g')
 
-var_text = r'$\sigma_0$ = {0:.1f} MPa, $\eta$ = {1:.1f} kPa s'.format(s_i/10**6,eta/10**3)
-ax.text(0.6, 0.9, var_text, transform=ax.transAxes)
+var_text = r'$\sigma_0$ = {0:.1f} MPa, $\eta$ = {1:.1f} kPa s'.format(s0/10**6,eta/10**3)
+ax.text(0.5, 0.9, var_text, transform=ax.transAxes)
 eq_text = r'd$\epsilon$/d$t$ = $\sigma_0$/$\eta$'
-ax.text(0.6, 0.8, eq_text, transform=ax.transAxes)
+ax.text(0.5, 0.8, eq_text, transform=ax.transAxes)
 ax.text(0.3, 0.25, '$l_0$', transform=ax.transAxes)
 
 # for dashpot
@@ -108,7 +114,7 @@ fps = 1000/frame_int        # frames per second
 ani = FuncAnimation(fig, update, frames=f, 
                     init_func=init, blit=True, interval=frame_int, repeat=False)
 
-savefile = "./gif/dashpot_stepStress_ani_(sigma={0:.2f}MPa,eta={1:.1f}kPas).gif".format(s_i/10**6,eta/10**3)
+savefile = "./gif/dashpot_stepStress_ani_(sigma={0:.2f}MPa,eta={1:.1f}kPas).gif".format(s0/10**6,eta/10**3)
 ani.save(savefile, writer='pillow', fps=fps)
 
 plt.show()

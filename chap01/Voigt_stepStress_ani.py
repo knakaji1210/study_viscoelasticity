@@ -10,10 +10,11 @@ from matplotlib.animation import FuncAnimation
 テキストの式(1.22)をベースに組み立てる
 '''
 
-def Voigt(e, t, s_i, E, eta):
+def Voigt(e, t, s, E, eta):
+# e: strain, s: stress, eta: viscosity
+# ここでは下でargsとしてs=s0を入れてステップ応力を実現
     tau = eta/E                 # retardation time [s]
-    e_inf = s_i/E
-    dedt = (e_inf - e)/tau      # (1.22)
+    dedt = (s/E - e)/tau      # (1.22)
     return dedt
 
 # variables
@@ -30,9 +31,9 @@ w = 0.5                     # ratio of dashpot width
 
 # initial condition
 try:
-    s_i = float(input('step stress [MPa] (default = 0.1 MPa): '))*10**6
+    s0 = float(input('step stress [MPa] (default = 0.1 MPa): '))*10**6
 except ValueError:
-    s_i = 10**5             # [Pa] step stress
+    s0 = 10**5             # [Pa] step stress
 e0 = 0                      # [] initial strain
 
 tmax = 10                   # [s] duration time
@@ -42,10 +43,10 @@ t_b = np.arange(-0.1*tmax,0,dt) # time before step stress
 t = np.concatenate([t_b,t_a])   # whole time 
 zeros = np.zeros(len(t_b))
 ones = np.ones(len(t_a))
-s = np.concatenate([zeros,ones*s_i])
+s = np.concatenate([zeros,ones*s0])
 
 # solution of ODE
-sol = odeint(Voigt, e0, t_a, args=(s_i,E,eta))
+sol = odeint(Voigt, e0, t_a, args=(s0,E,eta))
 e = np.concatenate([zeros,sol[:,0]])        # [] strain
 el = e*l                                    # [m] elongation
 dedt = np.array([0.0]+[(e[k+1]-e[k])/(t[k+1]-t[k]) for k in range(len(e)-1)])     # 簡易的なeの微分
@@ -87,11 +88,8 @@ ax.plot(x_d1,y_d2, c='b')
 ax.plot([l/2,l/2],[w+1,-w+1], c='b')
 rect = patches.Rectangle(xy=(l/2, -w+1), width=2*l/3, height=2*w, facecolor='y')
 ax.add_patch(rect)
-ax.plot([0,l],[-2,-2], c='g')
-ax.plot([0,0],[-1.8,-2.2], c='g')
-ax.plot([l,l],[-1.8,-2.2], c='g')
 
-var_text = r'$\sigma_0$ = {0:.1f} MPa, $E$ = {1:.1f} MPa, $\eta$ = {2:.1f} kPa s'.format(s_i/10**6,E/10**6,eta/10**3)
+var_text = r'$\sigma_0$ = {0:.1f} MPa, $E$ = {1:.1f} MPa, $\eta$ = {2:.1f} kPa s'.format(s0/10**6,E/10**6,eta/10**3)
 ax.text(0.5, 0.9, var_text, transform=ax.transAxes)
 eq_text = r'd$\epsilon$/d$t$ = ($\sigma_0$/$E$ - $\epsilon$)/$\tau$'
 ax.text(0.5, 0.8, eq_text, transform=ax.transAxes)
@@ -153,7 +151,7 @@ fps = 1000/frame_int        # frames per second
 ani = FuncAnimation(fig, update, frames=f, 
                     init_func=init, blit=True, interval=frame_int, repeat=False)
 
-savefile = "./gif/Voigt_stepStress_(sigma={0:.2f}MPa,mod={1:.1f}MPa,eta={2:.1f}kPas).gif".format(s_i/10**6,E/10**6,eta/10**3)
+savefile = "./gif/Voigt_stepStress_(sigma={0:.2f}MPa,mod={1:.1f}MPa,eta={2:.1f}kPas).gif".format(s0/10**6,E/10**6,eta/10**3)
 ani.save(savefile, writer='pillow', fps=fps)
 
 plt.show()

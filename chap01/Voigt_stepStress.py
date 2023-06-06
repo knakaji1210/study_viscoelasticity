@@ -8,10 +8,11 @@ import matplotlib.pyplot as plt
 テキストの式(1.22)をベースに組み立てる
 '''
 
-def Voigt(e, t, s_i, E, eta):
+def Voigt(e, t, s, E, eta):
+# e: strain, s: stress, eta: viscosity
+# ここでは下でargsとしてs=s0を入れてステップ応力を実現
     tau = eta/E                 # retardation time [s]
-    e_inf = s_i/E
-    dedt = (e_inf - e)/tau      # (1.22)
+    dedt = (s/E - e)/tau      # (1.22)
     return dedt
 
 # variables
@@ -26,9 +27,9 @@ except ValueError:
 
 # initial condition
 try:
-    s_i = float(input('step stress [MPa] (default = 0.1 MPa): '))*10**6
+    s0 = float(input('step stress [MPa] (default = 0.1 MPa): '))*10**6
 except ValueError:
-    s_i = 10**5             # [Pa] step stress
+    s0 = 10**5              # [Pa] step stress
 e0 = 0                      # [] initial strain
 
 tmax = 10                   # [s] duration time
@@ -38,10 +39,10 @@ t_b = np.arange(-0.1*tmax,0,dt) # time before step stress
 t = np.concatenate([t_b,t_a])   # whole time 
 zeros = np.zeros(len(t_b))
 ones = np.ones(len(t_a))
-s = np.concatenate([zeros,ones*s_i])
+s = np.concatenate([zeros,ones*s0])
 
 # solution of ODE
-sol = odeint(Voigt, e0, t_a, args=(s_i,E,eta))
+sol = odeint(Voigt, e0, t_a, args=(s0,E,eta))
 e = np.concatenate([zeros,sol[:,0]])        # [] strain
 dedt = np.array([0.0]+[(e[k+1]-e[k])/(t[k+1]-t[k]) for k in range(len(e)-1)])     # 簡易的なde/dt
 s_s = E*e                                   # stress on spring
@@ -66,7 +67,7 @@ ax2.set_ylabel('strain, $\epsilon$')
 ax1.set_ylim(-0.1*np.max(s),1.5*np.max(s))
 ax2.set_ylim(-0.1*np.max(e),1.5*np.max(e))
 
-var_text = r'$\sigma_0$ = {0:.1f} MPa, $E$ = {1:.1f} MPa, $\eta$ = {2:.1f} kPa s'.format(s_i/10**6,E/10**6,eta/10**3)
+var_text = r'$\sigma_0$ = {0:.1f} MPa, $E$ = {1:.1f} MPa, $\eta$ = {2:.1f} kPa s'.format(s0/10**6,E/10**6,eta/10**3)
 ax1.text(0.1, 0.9, var_text, transform=ax1.transAxes)
 eq_text = r'd$\epsilon$/d$t$ = ($\sigma_0$/$E$ - $\epsilon$)/$\tau$'
 ax2.text(0.1, 0.9, eq_text, transform=ax2.transAxes)
@@ -82,7 +83,7 @@ ax2.plot(t, e, 'b', label='$\epsilon$ (output)')
 ax2.legend(loc='upper right')
 
 
-savefile = "./png/Voigt_stepStress_(sigma={0:.2f}MPa,mod={1:.1f}MPa,eta={2:.1f}kPas).png".format(s_i/10**6,E/10**6,eta/10**3)
+savefile = "./png/Voigt_stepStress_(sigma={0:.2f}MPa,mod={1:.1f}MPa,eta={2:.1f}kPas).png".format(s0/10**6,E/10**6,eta/10**3)
 fig.savefig(savefile, dpi=300)
 
 plt.show()

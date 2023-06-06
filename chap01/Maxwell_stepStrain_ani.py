@@ -11,6 +11,8 @@ from matplotlib.animation import FuncAnimation
 '''
 
 def Maxwell(s, t, E, eta):
+# e: strain, s: stress, E: modulus, eta: viscosity
+# ステップ歪みe=e0を加えるので、式(1.11)のde/dtの項が0となっている
     tau = eta/E                 # retardation time [s]
     dsdt = -s/tau               # (1.12)
     return dsdt
@@ -24,15 +26,17 @@ try:
     eta = float(input('viscosity [kPa s] (default = 500.0 kPa s): '))*10**3
 except ValueError:
     eta = 5*10**5               # [Pa s] viscosity
+
+tau = eta/E
 l = 0.1                     # [m] equilibrium length
 w = 0.5                     # ratio of dashpot width
 
 # initial condition
 try:
-    e_i = float(input('step strain [] (default = 0.3): '))
+    e0 = float(input('step strain [] (default = 0.3): '))
 except ValueError:
-    e_i = 0.3               # [] step strain
-s0 = E*e_i                  # [Pa] initial stress
+    e0 = 0.3               # [] step strain
+s0 = E*e0                  # [Pa] initial stress
 
 tmax = 10                   # [s] duration time
 dt = 0.05                   # [s] interval time
@@ -41,8 +45,9 @@ t_b = np.arange(-0.1*tmax,0,dt) # time before step stress
 t = np.concatenate([t_b,t_a])   # whole time 
 zeros = np.zeros(len(t_b))
 ones = np.ones(len(t_a))
-e = np.concatenate([zeros,ones*e_i])
-el = e*2*l                                    # [m] elongation
+e = np.concatenate([zeros,ones*e0])
+# 直列なのでl0=2lとなっている
+el = e*2*l                                  # [m] elongation
 
 # solution of ODE
 sol = odeint(Maxwell, s0, t_a, args=(E,eta))
@@ -50,8 +55,8 @@ s = np.concatenate([zeros,sol[:,0]])        # [] stress
 integral_s = np.array([s[:k+1].sum()*dt for k in range(len(s))])     # 簡易的なsの積分
 e_s = s/E                                   # strain on spring
 e_d = integral_s/eta                        # strain on dashpot
-el_s = e_s*2*l                                # [m] elongation of spring
-el_d = e_d*2*l                                # [m] elongation of dashpot
+el_s = e_s*2*l                              # [m] elongation of spring
+el_d = e_d*2*l                              # [m] elongation of dashpot
 
 # scaling for figure
 s = s/10**6                     # MPaスケール
@@ -82,13 +87,13 @@ ax.plot([l/4,l/4],[w,-w], c='b')
 rect = patches.Rectangle(xy=(l/4, -w), width=3*l/4, height=2*w, facecolor='y')
 ax.add_patch(rect)
 
-var_text = r'$\epsilon_0$ = {0:.1f}, $E$ = {1:.1f} MPa, $\eta$ = {2:.1f} kPa s'.format(e_i,E/10**6,eta/10**3)
-ax.text(0.6, 0.9, var_text, transform=ax.transAxes)
+var_text = r'$\epsilon_0$ = {0:.1f}, $E$ = {1:.1f} MPa, $\eta$ = {2:.1f} kPa s'.format(e0,E/10**6,eta/10**3)
+ax.text(0.5, 0.9, var_text, transform=ax.transAxes)
 eq_text = r'd$\sigma$/d$t$ = -$\sigma$/$\tau$'
-ax.text(0.6, 0.8, eq_text, transform=ax.transAxes)
+ax.text(0.5, 0.8, eq_text, transform=ax.transAxes)
 tau = eta/E
 res_text = r'$\tau$ = {0:.1f} s'.format(tau)
-ax.text(0.6, 0.7, res_text, transform=ax.transAxes)
+ax.text(0.5, 0.7, res_text, transform=ax.transAxes)
 ax.text(0.35, 0.25, '$l_0$', transform=ax.transAxes)
 
 # for common
@@ -148,7 +153,7 @@ fps = 1000/frame_int        # frames per second
 ani = FuncAnimation(fig, update, frames=f, 
                     init_func=init, blit=True, interval=frame_int, repeat=False)
 
-savefile = "./gif/Maxwell_stepStrain_(epsilon={0:.2f},mod={1:.1f}MPa,eta={2:.1f}kPas).gif".format(e_i,E/10**6,eta/10**3)
+savefile = "./gif/Maxwell_stepStrain_(epsilon={0:.2f},mod={1:.1f}MPa,eta={2:.1f}kPas).gif".format(e0,E/10**6,eta/10**3)
 ani.save(savefile, writer='pillow', fps=fps)
 
 plt.show()

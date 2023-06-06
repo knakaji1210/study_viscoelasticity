@@ -15,9 +15,9 @@ except ValueError:
 
 # initial condition
 try:
-    s_i = float(input('step stress [MPa] (default = 0.1 MPa): '))*10**6
+    s0 = float(input('step stress [MPa] (default = 0.1 MPa): '))*10**6
 except ValueError:
-    s_i = 10**5             # [Pa] step stress
+    s0 = 10**5             # [Pa] step stress
 e0 = 0                      # [] initial strain
 
 tmax = 2                    # [s] duration time
@@ -27,7 +27,7 @@ t_b = np.arange(-0.5*tmax,0,dt) # time before step stress
 t = np.concatenate([t_b,t_a])   # whole time 
 zeros = np.zeros(len(t_b))
 ones = np.ones(len(t_a))
-s = np.concatenate([zeros,ones*s_i])
+s = np.concatenate([zeros,ones*s0])
 
 # solution of ODE（ここではそれをする必要はない）
 e = s/E
@@ -49,7 +49,7 @@ ax2.set_ylabel('strain, $\epsilon$')
 ax1.set_ylim(-0.1*np.max(s),1.5*np.max(s))
 ax2.set_ylim(-0.1*np.max(e),1.5*np.max(e))
 
-var_text = r'$\sigma_0$ = {0:.1f} MPa, $E$ = {1:.1f} MPa'.format(s_i/10**6,E/10**6)
+var_text = r'$\sigma_0$ = {0:.1f} MPa, $E$ = {1:.1f} MPa'.format(s0/10**6,E/10**6)
 ax1.text(0.1, 0.9, var_text, transform=ax1.transAxes)
 eq_text = r'$\epsilon$ = $\sigma_0/E$'
 ax2.text(0.1, 0.9, eq_text, transform=ax2.transAxes)
@@ -59,7 +59,7 @@ ax1.legend(loc='upper right')
 ax2.plot(t, e, 'b', label='$\epsilon$ (output)')
 ax2.legend(loc='upper right')
 
-savefile = "./png/spring_stepStress_(sigma={0:.2f}MPa,mod={1:.1f}MPa).png".format(s_i/10**6,E/10**6)
+savefile = "./png/spring_stepStress_(sigma={0:.2f}MPa,mod={1:.1f}MPa).png".format(s0/10**6,E/10**6)
 fig.savefig(savefile, dpi=300)
 
 plt.show()

@@ -4,8 +4,14 @@ import numpy as np
 from scipy.integrate import odeint
 import matplotlib.pyplot as plt
 
+'''
+テキストの式(1.5)をベースに組み立てる
+'''
+
 def dashpot(e, t, s, eta):
-    dedt = s/eta        # e: strain, s: step stress, eta: viscosity
+# e: strain, s: stress, eta: viscosity
+# ここでは下でargsとしてs=s0を入れてステップ応力を実現
+    dedt = s/eta        # (1.21)
     return dedt
 
 # variables
@@ -16,9 +22,9 @@ except ValueError:
 
 # initial condition
 try:
-    s_i = float(input('step stress [MPa] (default = 0.1 MPa): '))*10**6
+    s0 = float(input('step stress [MPa] (default = 0.1 MPa): '))*10**6
 except ValueError:
-    s_i = 10**5             # [Pa] step stress
+    s0 = 10**5             # [Pa] step stress
 e0 = 0                      # [] initial strain
 
 tmax = 2                    # [s] duration time
@@ -28,10 +34,10 @@ t_b = np.arange(-0.5*tmax,0,dt) # time before step stress
 t = np.concatenate([t_b,t_a])   # whole time 
 zeros = np.zeros(len(t_b))
 ones = np.ones(len(t_a))
-s = np.concatenate([zeros,ones*s_i])
+s = np.concatenate([zeros,ones*s0])
 
 # solution of ODE
-sol = odeint(dashpot, e0, t_a, args=(s_i,eta))
+sol = odeint(dashpot, e0, t_a, args=(s0,eta))
 e = np.concatenate([zeros,sol[:,0]])
 
 # scaling for figure
@@ -51,7 +57,7 @@ ax2.set_ylabel('strain, $\epsilon$')
 ax1.set_ylim(-0.1*np.max(s),1.5*np.max(s))
 ax2.set_ylim(-0.1*np.max(e),1.5*np.max(e))
 
-var_text = r'$\sigma_0$ = {0:.1f} MPa, $\eta$ = {1:.1f} kPa s'.format(s_i/10**6,eta/10**3)
+var_text = r'$\sigma_0$ = {0:.1f} MPa, $\eta$ = {1:.1f} kPa s'.format(s0/10**6,eta/10**3)
 ax1.text(0.1, 0.9, var_text, transform=ax1.transAxes)
 eq_text = r'd$\epsilon$/d$t$ = $\sigma_0$/$\eta$'
 ax2.text(0.1, 0.9, eq_text, transform=ax2.transAxes)
@@ -61,7 +67,7 @@ ax1.legend(loc='upper right')
 ax2.plot(t, e, 'b', label='$\epsilon$ (output)')
 ax2.legend(loc='upper right')
 
-savefile = "./png/dashpot_stepStress_(sigma={0:.2f}MPa,eta={1:.1f}kPas).png".format(s_i/10**6,eta/10**3)
+savefile = "./png/dashpot_stepStress_(sigma={0:.2f}MPa,eta={1:.1f}kPas).png".format(s0/10**6,eta/10**3)
 fig.savefig(savefile, dpi=300)
 
 plt.show()
