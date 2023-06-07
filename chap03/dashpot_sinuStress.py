@@ -35,9 +35,9 @@ af = 2*np.pi/T
 e0 = 0
 
 tmax = 5*T                  # [s] duration time
-dt = 0.01                   # [s] interval time
+dt = T/250                   # [s] interval time
 t_a = np.arange(0, tmax, dt)    # time after step stress
-t_b = np.arange(-0.5*tmax,0,dt) # time before step stress
+t_b = np.arange(-0.1*tmax,0,dt) # time before step stress
 t = np.concatenate([t_b,t_a])   # whole time 
 zeros = np.zeros(len(t_b))
 s_a = np.array([samp*np.sin(af*t) for t in t_a])

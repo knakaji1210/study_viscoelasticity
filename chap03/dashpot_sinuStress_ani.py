@@ -40,9 +40,9 @@ af = 2*np.pi/T
 e0 = 0
 
 tmax = 5*T                  # [s] duration time
-dt = 0.05                   # [s] interval time
+dt = 0.1                   # [s] interval time
 t_a = np.arange(0, tmax, dt)    # time after step stress
-t_b = np.arange(-0.2*tmax,0,dt) # time before step stress
+t_b = np.arange(-2.0,0,dt) # time before step stress
 t = np.concatenate([t_b,t_a])   # whole time 
 zeros = np.zeros(len(t_b))
 s_a = np.array([samp*np.sin(af*t) for t in t_a])
@@ -84,9 +84,9 @@ ax.plot([0,0],[-1.8,-2.2], c='g')
 ax.plot([l,l],[-1.8,-2.2], c='g')
 
 var_text = r'$\sigma_{{amp}}$ = {0:.2f} MPa, $T$ = {1:.1f} s, $\eta$ = {2:.1f} kPa s'.format(samp/10**6,T,eta/10**3)
-ax.text(0.5, 0.9, var_text, transform=ax.transAxes)
+ax.text(0.4, 0.9, var_text, transform=ax.transAxes)
 eq_text = r'd$\epsilon$/d$t$ = $\sigma$/$\eta$'
-ax.text(0.5, 0.8, eq_text, transform=ax.transAxes)
+ax.text(0.4, 0.8, eq_text, transform=ax.transAxes)
 ax.text(0.3, 0.25, '$l_0$', transform=ax.transAxes)
 ax.text(0.6, 0.38, '$\sigma$ (input)', transform=ax.transAxes)
 
@@ -118,7 +118,7 @@ def update(i):              # ここのiは下のframes=np.arange(0, len(t))に�
     rod.set_data(x_rod,y_0)
     damper.set_data(x_damper,y_damper)
     point.set_data([l + el[i]],[0])
-    a = 0.1    # 見かけ上の振幅
+    a = 0.5    # 見かけ上の振幅
     x_stress = [l, l + a*s[i]]
     stress.set_data(x_stress,[-1,-1])
     if s[i] > 0:

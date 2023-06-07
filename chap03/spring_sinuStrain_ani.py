@@ -31,9 +31,9 @@ except ValueError:
 af = 2*np.pi/T
 
 tmax = 5*T                   # [s] duration time
-dt = 0.05                   # [s] interval time
+dt = 0.1                   # [s] interval time
 t_a = np.arange(0, tmax, dt)    # time after step stress
-t_b = np.arange(-0.2*tmax,0,dt) # time before step stress
+t_b = np.arange(-2.0,0,dt) # time before step stress
 t = np.concatenate([t_b,t_a])   # whole time 
 zeros = np.zeros(len(t_b))
 e_a = np.array([eamp*np.sin(af*t) for t in t_a])
@@ -65,9 +65,9 @@ ax.plot([0,0],[-1.8,-2.2], c='g')
 ax.plot([l,l],[-1.8,-2.2], c='g')
 
 var_text = r'$\epsilon_{{amp}}$ = {0:.2f}, $T$ = {1:.1f} s, $E$ = {2:.1f} MPa'.format(eamp,T,E/10**6)
-ax.text(0.5, 0.9, var_text, transform=ax.transAxes)
+ax.text(0.4, 0.9, var_text, transform=ax.transAxes)
 eq_text = r'$\sigma$ = $E\epsilon$'
-ax.text(0.5, 0.8, eq_text, transform=ax.transAxes)
+ax.text(0.4, 0.8, eq_text, transform=ax.transAxes)
 ax.text(0.3, 0.25, '$l_0$', transform=ax.transAxes)
 ax.text(0.6, 0.38, '$\sigma$ (output)', transform=ax.transAxes)
 
@@ -97,7 +97,7 @@ def update(i):              # ここのiは下のframes=np.arange(0, len(t))に�
     y_tri = w*((2/3)*np.arccos(np.cos(6*np.pi*(x_tri - l/4)/(el[i]+l/2)-np.pi/2+0.1))-1)
     triangle.set_data(x_tri,y_tri)
     point.set_data([l + el[i]],[0])
-    a = 0.1    # 見かけ上の振幅
+    a = 0.2    # 見かけ上の振幅
     x_stress = [l, l + a*s[i]/eamp]
     stress.set_data(x_stress,[-1,-1])
     if s[i] > 0:
