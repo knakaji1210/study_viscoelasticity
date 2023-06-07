@@ -114,7 +114,7 @@ fps = 1000/frame_int        # frames per second
 ani = FuncAnimation(fig, update, frames=f, 
                     init_func=init, blit=True, interval=frame_int, repeat=False)
 
-savefile = "./gif/spring_sinuStrain_(epsilon={0:.2f},T={1:.1f}s,mod={2:.1f}MPa).gif".format(eamp,T,E/10**5)
+savefile = "./gif/spring_sinuStrain_(epsilon={0:.2f},T={1:.1f}s,mod={2:.1f}MPa).gif".format(eamp,T,E/10**6)
 ani.save(savefile, writer='pillow', fps=fps)
 
 plt.show()
