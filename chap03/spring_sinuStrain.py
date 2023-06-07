@@ -64,7 +64,7 @@ ax1.legend(loc='upper right')
 ax2.plot(t, s, 'r', label='$\sigma$ (output)')
 ax2.legend(loc='upper right')
 
-savefile = "./png/spring_sinuStrain_(epsilon={0:.2f},T={1:.1f}s,mod={2:.1f}MPa).png".format(eamp,T,E/10**6)
+savefile = "./png/spring_sinuStrain_(epsilon={0:.2f},T={1:.1f}s,mod={2:.1f}MPa).png".format(eamp,T,E/10**5)
 fig.savefig(savefile, dpi=300)
 
 plt.show()
