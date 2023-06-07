@@ -20,10 +20,10 @@ except ValueError:
     s0 = 0.05*10**6         # [Pa] step stress
 e0 = 0                      # [] initial strain
 
-tmax = 2                    # [s] duration time
+tmax = 10                   # [s] duration time
 dt = 0.01                   # [s] interval time
 t_a = np.arange(0, tmax, dt)    # time after step stress
-t_b = np.arange(-0.5*tmax,0,dt) # time before step stress
+t_b = np.arange(-0.1*tmax,0,dt) # time before step stress
 t = np.concatenate([t_b,t_a])   # whole time 
 zeros = np.zeros(len(t_b))
 ones = np.ones(len(t_a))
