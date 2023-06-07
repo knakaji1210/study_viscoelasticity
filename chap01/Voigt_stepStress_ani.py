@@ -31,9 +31,9 @@ w = 0.5                     # ratio of dashpot width
 
 # initial condition
 try:
-    s0 = float(input('step stress [MPa] (default = 0.1 MPa): '))*10**6
+    s0 = float(input('step stress [MPa] (default = 0.05 MPa): '))*10**6
 except ValueError:
-    s0 = 10**5             # [Pa] step stress
+    s0 = 0.05*10**6         # [Pa] step stress
 e0 = 0                      # [] initial strain
 
 tmax = 10                   # [s] duration time
@@ -76,20 +76,20 @@ ax.plot([l/4, 5*l/4],[-2,-2], c='g')
 ax.plot([l/4, l/4],[-1.8,-2.2], c='g')
 ax.plot([5*l/4, 5*l/4],[-1.8,-2.2], c='g')
 ax.plot([l/4,l/4],[1,-1], c='b')
-ax.plot([l/4, l/2],y_1, c='b')
+ax.plot([l/4, (0.08+1/4)*l],y_1, c='b')
 ax.plot([l/4, l/2],y_2, c='b')
 ax.plot(0,0,'ro', markersize='10')
 # for dashpot
-x_d1 = [l/2, (0.92+1/4)*l]
+x_d1 = [(0.08+1/4)*l, (0.92+1/4)*l]
 y_d1 = [w+1, w+1]
 y_d2 = [-w+1, -w+1]
 ax.plot(x_d1,y_d1, c='b')
 ax.plot(x_d1,y_d2, c='b')
-ax.plot([l/2,l/2],[w+1,-w+1], c='b')
-rect = patches.Rectangle(xy=(l/2, -w+1), width=2*l/3, height=2*w, facecolor='y')
+ax.plot([(0.08+1/4)*l,(0.08+1/4)*l],[w+1,-w+1], c='b')
+rect = patches.Rectangle(xy=((0.08+1/4)*l, -w+1), width=0.83*l, height=2*w, facecolor='y')
 ax.add_patch(rect)
 
-var_text = r'$\sigma_0$ = {0:.1f} MPa, $E$ = {1:.1f} MPa, $\eta$ = {2:.1f} kPa s'.format(s0/10**6,E/10**6,eta/10**3)
+var_text = r'$\sigma_0$ = {0:.2f} MPa, $E$ = {1:.1f} MPa, $\eta$ = {2:.1f} kPa s'.format(s0/10**6,E/10**6,eta/10**3)
 ax.text(0.5, 0.9, var_text, transform=ax.transAxes)
 eq_text = r'd$\epsilon$/d$t$ = ($\sigma_0$/$E$ - $\epsilon$)/$\tau$'
 ax.text(0.5, 0.8, eq_text, transform=ax.transAxes)
@@ -134,8 +134,8 @@ def update(i):              # ここのiは下のframes=np.arange(0, len(t))に�
     y_tri = w*((2/3)*np.arccos(np.cos(6*np.pi*(x_tri - l/2)/(el[i]+l/2)-np.pi/2+0.1))-3)
     triangle.set_data(x_tri,y_tri)
     # for dashpot
-    x_rod_da = [x_o-l/4-0.1*l, x_c]
-    x_damp = x_o-l/4-0.1*l      # 0.1*lは位置調整のため
+    x_rod_da = [x_o-l/4, x_c]
+    x_damp = x_o-l/4
     y_damp = 0.7*w
     x_damper = [x_damp, x_damp]
     y_damper = [y_damp+1, -y_damp+1]

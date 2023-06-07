@@ -29,9 +29,9 @@ tau = eta/E
 
 # initial condition
 try:
-    e0 = float(input('step strain [] (default = 0.4): '))
+    e0 = float(input('step strain [] (default = 0.2): '))
 except ValueError:
-    e0 = 0.4               # [] step strain
+    e0 = 0.2               # [] step strain
 s0 = E*e0                  # [Pa] initial stress
 
 tmax = 10                   # [s] duration time

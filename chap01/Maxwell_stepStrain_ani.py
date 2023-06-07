@@ -33,9 +33,9 @@ w = 0.5                     # ratio of dashpot width
 
 # initial condition
 try:
-    e0 = float(input('step strain [] (default = 0.3): '))
+    e0 = float(input('step strain [] (default = 0.2): '))
 except ValueError:
-    e0 = 0.3               # [] step strain
+    e0 = 0.2               # [] step strain
 s0 = E*e0                  # [Pa] initial stress
 
 tmax = 10                   # [s] duration time
@@ -72,19 +72,19 @@ ax.set_xlim(-0.05,0.4)
 ax.set_ylim(-5,5)
 # for common
 y_0 = [0, 0]
-ax.plot([0, l/4],y_0, c='b')
+ax.plot([0, 0.08*l],y_0, c='b')
 ax.plot(0,0,'ro', markersize='10')
 ax.plot([0,2*l],[-2,-2], c='g')
 ax.plot([0,0],[-1.8,-2.2], c='g')
 ax.plot([2*l,2*l],[-1.8,-2.2], c='g')
 # for dashpot
-x_d1 = [l/4, l]
+x_d1 = [0.08*l, 0.92*l]
 y_d1 = [w, w]
 y_d2 = [-w, -w]
 ax.plot(x_d1,y_d1, c='b')
 ax.plot(x_d1,y_d2, c='b')
-ax.plot([l/4,l/4],[w,-w], c='b')
-rect = patches.Rectangle(xy=(l/4, -w), width=3*l/4, height=2*w, facecolor='y')
+ax.plot([0.08*l,0.08*l],[w,-w], c='b')
+rect = patches.Rectangle(xy=(0.08*l, -w), width=0.83*l, height=2*w, facecolor='y')
 ax.add_patch(rect)
 
 var_text = r'$\epsilon_0$ = {0:.1f}, $E$ = {1:.1f} MPa, $\eta$ = {2:.1f} kPa s'.format(e0,E/10**6,eta/10**3)
@@ -123,8 +123,8 @@ def update(i):              # ここのiは下のframes=np.arange(0, len(t))に�
     point.set_data([l/4+x_o],[0])
     # for dashpot
     x_da = l/2 + el_d[i]
-    x_rod_da = [x_da-0.1*l, x_da+3*l/4]
-    x_damp = x_da-0.1*l      # 0.1*lは位置調整のため
+    x_rod_da = [x_da, x_da+3*l/4]
+    x_damp = x_da
     y_damp = 0.7*w
     x_damper = [x_damp, x_damp]
     y_damper = [y_damp, -y_damp]

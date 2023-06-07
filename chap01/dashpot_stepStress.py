@@ -22,9 +22,9 @@ except ValueError:
 
 # initial condition
 try:
-    s0 = float(input('step stress [MPa] (default = 0.1 MPa): '))*10**6
+    s0 = float(input('step stress [MPa] (default = 0.05 MPa): '))*10**6
 except ValueError:
-    s0 = 10**5             # [Pa] step stress
+    s0 = 0.05*10**6         # [Pa] step stress
 e0 = 0                      # [] initial strain
 
 tmax = 2                    # [s] duration time
@@ -57,7 +57,7 @@ ax2.set_ylabel('strain, $\epsilon$')
 ax1.set_ylim(-0.1*np.max(s),1.5*np.max(s))
 ax2.set_ylim(-0.1*np.max(e),1.5*np.max(e))
 
-var_text = r'$\sigma_0$ = {0:.1f} MPa, $\eta$ = {1:.1f} kPa s'.format(s0/10**6,eta/10**3)
+var_text = r'$\sigma_0$ = {0:.2f} MPa, $\eta$ = {1:.1f} kPa s'.format(s0/10**6,eta/10**3)
 ax1.text(0.1, 0.9, var_text, transform=ax1.transAxes)
 eq_text = r'd$\epsilon$/d$t$ = $\sigma_0$/$\eta$'
 ax2.text(0.1, 0.9, eq_text, transform=ax2.transAxes)

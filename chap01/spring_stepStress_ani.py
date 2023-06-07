@@ -19,9 +19,9 @@ w = 0.5                     # ratio of spring width
 
 # initial condition
 try:
-    s0 = float(input('step stress [MPa] (default = 0.1 MPa): '))*10**6
+    s0 = float(input('step stress [MPa] (default = 0.05 MPa): '))*10**6
 except ValueError:
-    s0 = 10**5             # [Pa] step stress
+    s0 = 0.05*10**6         # [Pa] step stress
 e0 = 0                      # [] initial strain
 
 tmax = 2                    # [s] duration time
@@ -58,7 +58,7 @@ ax.plot([0,l],[-2,-2], c='g')
 ax.plot([0,0],[-1.8,-2.2], c='g')
 ax.plot([l,l],[-1.8,-2.2], c='g')
 
-var_text = r'$\sigma_0$ = {0:.1f} MPa, $E$ = {1:.1f} MPa'.format(s0/10**6,E/10**6)
+var_text = r'$\sigma_0$ = {0:.2f} MPa, $E$ = {1:.1f} MPa'.format(s0/10**6,E/10**6)
 ax.text(0.5, 0.9, var_text, transform=ax.transAxes)
 eq_text = r'$\epsilon$ = $\sigma_0/E$'
 ax.text(0.5, 0.8, eq_text, transform=ax.transAxes)

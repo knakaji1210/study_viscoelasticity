@@ -26,9 +26,9 @@ w = 0.5                     # ratio of dashpot width
 
 # initial condition
 try:
-    s0 = float(input('step stress [MPa] (default = 0.1 MPa): '))*10**6
+    s0 = float(input('step stress [MPa] (default = 0.05 MPa): '))*10**6
 except ValueError:
-    s0 = 10**5             # [Pa] step stress
+    s0 = 0.05*10**6         # [Pa] step stress
 e0 = 0                      # [] initial strain
 
 tmax = 2                    # [s] duration time
@@ -60,22 +60,22 @@ ax.set_ylim(-5,5)
 
 # for common
 y_0 = [0, 0]
-ax.plot([0, l/4],y_0, c='b')
+ax.plot([0, 0.08*l],y_0, c='b')
 ax.plot(0,0, 'ro', markersize='10')
 # for dashpot
-x_d1 = [l/4, 0.92*l]
+x_d1 = [0.08*l, 0.92*l]
 y_d1 = [w, w]
 y_d2 = [-w, -w]
 ax.plot(x_d1,y_d1, c='b')
 ax.plot(x_d1,y_d2, c='b')
-ax.plot([l/4,l/4],[w,-w], c='b')
-rect = patches.Rectangle(xy=(l/4, -w), width=2*l/3, height=2*w, facecolor='y')
+ax.plot([0.08*l,0.08*l],[w,-w], c='b')
+rect = patches.Rectangle(xy=(0.08*l, -w), width=0.83*l, height=2*w, facecolor='y')
 ax.add_patch(rect)
 ax.plot([0,l],[-2,-2], c='g')
 ax.plot([0,0],[-1.8,-2.2], c='g')
 ax.plot([l,l],[-1.8,-2.2], c='g')
 
-var_text = r'$\sigma_0$ = {0:.1f} MPa, $\eta$ = {1:.1f} kPa s'.format(s0/10**6,eta/10**3)
+var_text = r'$\sigma_0$ = {0:.2f} MPa, $\eta$ = {1:.1f} kPa s'.format(s0/10**6,eta/10**3)
 ax.text(0.5, 0.9, var_text, transform=ax.transAxes)
 eq_text = r'd$\epsilon$/d$t$ = $\sigma_0$/$\eta$'
 ax.text(0.5, 0.8, eq_text, transform=ax.transAxes)
@@ -97,7 +97,7 @@ def init():               # FuncAnimationでinit_funcで呼び出す
 
 def update(i):              # ここのiは下のframes=np.arange(0, len(t))に対応した引数になっている
     x_rod = [l/2 + el[i], l + el[i]]
-    x_damp = (l/2)+el[i]
+    x_damp = l/2+el[i]
     y_damp = 0.7*w
     x_damper = [x_damp, x_damp]
     y_damper = [y_damp, -y_damp]
