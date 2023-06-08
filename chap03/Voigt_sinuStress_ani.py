@@ -18,6 +18,10 @@ def Voigt(e, t, samp, af, eta):
     dedt = (s/E - e)/tau        # (1.21)
     return dedt
 
+def getNearestIndex2value(list,value):
+    index = np.abs(np.array(list) -value).argsort()[0].tolist()
+    return index
+
 # variables
 try:
     E = float(input('modulus [MPa] (default = 0.2 MPa): '))*10**6
@@ -27,6 +31,8 @@ try:
     eta = float(input('viscosity [kPa s] (default = 500.0 kPa s): '))*10**3
 except ValueError:
     eta = 5*10**5               # [Pa s] viscosity
+
+tau = eta/E
 
 l = 0.1                     # [m] equilibrium length
 w = 0.5                     # ratio of dashpot width
@@ -43,24 +49,29 @@ except ValueError:
 
 af = 2*np.pi/T
 e0 = 0                      # [] initial strain
-tau = eta/E
 
-tmax = 5*T                   # [s] duration time
-dt = 0.1                   # [s] interval time
+tmax = 5*T                  # [s] duration time
+dt = 0.1                    # [s] interval time
 t_a = np.arange(0, tmax, dt)    # time after step stress
 t_b = np.arange(-2.0,0,dt) # time before step stress
 t = np.concatenate([t_b,t_a])   # whole time 
 zeros = np.zeros(len(t_b))
 s_a = np.array([samp*np.sin(af*t) for t in t_a])
-s = np.concatenate([zeros,s_a]) # whole stress
+s = np.concatenate([zeros,s_a])     # whole stress
+s_last = s[int(0.8*len(s)):]        # 後半部分を抽出（前半は過渡応答を含むから）
 
 # solution of ODE
 sol = odeint(Voigt, e0, t_a, args=(samp,af,eta))
 e = np.concatenate([zeros,sol[:,0]])        # [] strain
-el = e*l                                    # [m] elongation
+e_last = e[int(0.8*len(e)):]                # 後半部分を抽出（前半は過渡応答を含むから）
+emax = np.max(e_last)
+ind = getNearestIndex2value(e_last,0)       # 出力信号が0になるindexを抽出
+epha = (180/np.pi)*np.arcsin(np.abs(s_last[ind])/samp) 
 dedt = np.array([0.0]+[(e[k+1]-e[k])/(t[k+1]-t[k]) for k in range(len(e)-1)])     # 簡易的なeの微分
 s_s = E*e                                   # stress on spring
 s_d = eta*dedt                              # stress on dashpot
+# 並列なのでl0=lとなっている
+el = e*l                                    # [m] elongation
 
 # scaling for figure
 s = s/10**6                     # MPaスケール
@@ -106,6 +117,11 @@ res_text = r'$\tau$ = {0:.1f} s'.format(tau)
 ax.text(0.4, 0.7, res_text, transform=ax.transAxes)
 ax.text(0.35, 0.15, '$l_0$', transform=ax.transAxes)
 ax.text(0.75, 0.28, '$\sigma$ (input)', transform=ax.transAxes)
+ax.text(0.1, 0.8, '$\omega_f$ = {0:.2f} s$^{{-1}}$'.format(af), transform=ax.transAxes)
+eamp_template = r'$\epsilon_{{amp}}$ = {0:.2f}'.format(emax)
+ax.text(0.75, 0.52, eamp_template, transform=ax.transAxes)
+epha_template = r'$\theta$ = {0:.1f} $\degree$'.format(epha)
+ax.text(0.75, 0.45, epha_template, transform=ax.transAxes)
 
 # for common
 bar, = ax.plot([],[], 'b', animated=True)
@@ -164,6 +180,14 @@ def update(i):              # ここのiは下のframes=np.arange(0, len(t))に�
         arrow_n.set_data([3*l/2 + a*s[i]],[-2])
     time_text.set_text(time_template % (t[i]))
     return bar, rod, point, rod_sp, triangle, rod_da, damper, stress, arrow_p, arrow_n, time_text
+
+'''
+y_triの中の重要部分は
+x_tri1 = np.linspace(a, b,100)
+のとき
+(xtri - a)/(b - a)
+になる 
+'''
 
 f = np.arange(0, len(t))
 frame_int = 1000 * dt       # [ms] interval between frames

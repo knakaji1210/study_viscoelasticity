@@ -19,6 +19,10 @@ def Maxwell(s, t, eamp, af, E, eta):
     dsdt = E*dedt-s/tau         # (1.11)
     return dsdt
 
+def getNearestIndex2value(list,value):
+    index = np.abs(np.array(list) -value).argsort()[0].tolist()
+    return index
+
 # variables
 try:
     E = float(input('modulus [MPa] (default = 0.2 MPa): '))*10**6
@@ -45,31 +49,37 @@ except ValueError:
     T = 2.0
 
 af = 2*np.pi/T
-
 s0 = 0                      # [] initial strain
 
-tmax = 5*T                   # [s] duration time
-dt = 0.1                   # [s] interval time
+tmax = 5*T                  # [s] duration time
+dt = 0.1                    # [s] interval time
 t_a = np.arange(0, tmax, dt)    # time after step stress
 t_b = np.arange(-2.0,0,dt) # time before step stress
 t = np.concatenate([t_b,t_a])   # whole time 
 zeros = np.zeros(len(t_b))
 e_a = np.array([eamp*np.sin(af*t) for t in t_a])
-e = np.concatenate([zeros,e_a]) # whole strain
+e = np.concatenate([zeros,e_a])     # whole strain
+e_last = e[int(0.8*len(e)):]        # 後半部分を抽出（前半は過渡応答を含むから）
 # 直列なのでl0=2lとなっている
-el = e*2*l                                  # [m] elongation
+el = e*2*l                          # [m] elongation
 
 # solution of ODE
 sol = odeint(Maxwell, s0, t_a, args=(eamp,af,E,eta))
 s = np.concatenate([zeros,sol[:,0]])        # [] stress
+s_last = s[int(0.8*len(s)):]                # 後半部分を抽出（前半は過渡応答を含むから）
+smax = np.max(s_last)
+ind = getNearestIndex2value(s_last,0)       # 出力信号が0になるindexを抽出
+spha = (180/np.pi)*np.arcsin(np.abs(e_last[ind])/eamp)
 integral_s = np.array([s[:k+1].sum()*dt for k in range(len(s))])     # 簡易的なsの積分
 e_s = s/E                                   # strain on spring
 e_d = integral_s/eta                        # strain on dashpot
 el_s = e_s*2*l                              # [m] elongation of spring
 el_d = e_d*2*l                              # [m] elongation of dashpot
 
+
 # scaling for figure
 s = s/10**6                     # MPaスケール
+smax = smax/10**6               # MPaスケール
 
 fig = plt.figure(figsize=(8,5))
 ax = fig.add_subplot(111, xlabel='$t$ /s')
@@ -101,11 +111,15 @@ var_text = r'$\epsilon_{{amp}}$ = {0:.2f}, $T$ = {1:.1f} s, $E$ = {2:.1f} MPa, $
 ax.text(0.4, 0.9, var_text, transform=ax.transAxes)
 eq_text = r'd$\sigma$/d$t$ = -$\sigma$/$\tau$ + $E$d$\epsilon$/d$t$'
 ax.text(0.4, 0.8, eq_text, transform=ax.transAxes)
-tau = eta/E
 res_text = r'$\tau$ = {0:.1f} s'.format(tau)
 ax.text(0.4, 0.7, res_text, transform=ax.transAxes)
 ax.text(0.35, 0.15, '$l_0$', transform=ax.transAxes)
 ax.text(0.75, 0.28, '$\epsilon$ (input)', transform=ax.transAxes)
+ax.text(0.1, 0.8, '$\omega_f$ = {0:.2f} s$^{{-1}}$'.format(af), transform=ax.transAxes)
+samp_template = r'$\sigma_{{amp}}$ = {0:.2f} MPa'.format(smax)
+ax.text(0.75, 0.52, samp_template, transform=ax.transAxes)
+spha_template = r'$\theta$ = {0:.1f} $\degree$'.format(spha)
+ax.text(0.75, 0.45, spha_template, transform=ax.transAxes)
 
 # for common
 rod, = ax.plot([],[], 'b', animated=True)
