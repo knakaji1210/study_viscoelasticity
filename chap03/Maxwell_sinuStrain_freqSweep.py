@@ -46,7 +46,7 @@ try:
 except ValueError:
     log_af_max = 1.0
 try:
-    num_freq = int(input('number of anglar frequency (default=5): '))
+    num_freq = int(input('number of anglar frequency (default=30): '))
 except ValueError:
     num_freq = 30
 try:
@@ -103,8 +103,7 @@ ax1.grid()
 title_text = "Maxwell model: sinusoidal strain"
 ax1.set_title(title_text)
 ax1.set_axisbelow(True)
-ax1.set_xlabel('$\omega_f$ /s$^{{-1}}$')
-ax1.set_lim=(af_list[0], af_list[-1])
+ax1.set_xlabel(r'$\omega_f$ $\tau$')
 ax1.set_ylim(0,1.2*samp_max)
 ax1.set_ylabel(r'$\sigma_{{amp}}$ /MPa')
 ax2 = ax1.twinx()
@@ -123,8 +122,9 @@ ax1.plot(aft_list,samp, 'ro-', label=r'$\sigma_{{amp}}$')
 ax1.set_xscale('log')
 ax2.plot(aft_list,spha, 'bo-', label=r'$\theta$')
 
-ax1.legend(loc='upper right')
-ax2.legend(loc='lower right')
+h1, l1 = ax1.get_legend_handles_labels()
+h2, l2 = ax2.get_legend_handles_labels()
+ax1.legend(h1 + h2, l1 + l2)
 
 savefile = "./png/Maxwell_sinuStrain_freqSweep_(epsilon={0:.2f},tau={1:.1f}s,mod={2:.1f}MPa,eta={3:.1f}kPas).png".format(eamp,tau,E/10**6,eta/10**3)
 fig.savefig(savefile, dpi=300)
