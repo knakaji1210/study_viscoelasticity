@@ -112,6 +112,6 @@ if __name__=='__main__':
     ax2.scatter(x2_scaled, y2, c='b', label=label2)
     ax2.legend(loc=legend_loc)
     ax2.set_axisbelow(True)
-    fig.savefig(savefile)
+    fig.savefig(savefile, dpi=300)
 
     plt.show()
