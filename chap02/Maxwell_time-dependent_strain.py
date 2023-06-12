@@ -96,6 +96,7 @@ if __name__=='__main__':
     ax2.scatter(tim2, stress2, c='r')
     ax2.scatter(tim3, stress3, c='r')
 
-    fig.savefig('./png/Maxwell_time-dependent_strain.png')
+    savefile = './png/Maxwell_time-dependent_strain_(tau={0:.1f}ms).png'.format(T*10**3)
+    fig.savefig(savefile, dpi=300)
 
     plt.show()
