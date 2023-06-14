@@ -40,7 +40,7 @@ el = e*l                        # [m] elongation
 # scaling for figure
 s = s/10**6                     # MPaスケール
 
-fig = plt.figure(figsize=(8,5))
+fig = plt.figure(figsize=(8,5), tight_layout=True)
 ax = fig.add_subplot(111)
 ax.grid()
 title_text = "spring (Hooke's elasticity): step stress"

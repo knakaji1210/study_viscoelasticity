@@ -43,7 +43,7 @@ e = np.concatenate([zeros,sol[:,0]])
 # scaling for figure
 s = s/10**6                     # MPaスケール
 
-fig = plt.figure(figsize=(8,8))
+fig = plt.figure(figsize=(8,10), tight_layout=True)
 title_text = "dashpot (Newton's viscosity): step stress"
 fig.suptitle(title_text)
 ax1 = fig.add_subplot(211, xlabel='$t$ /s')

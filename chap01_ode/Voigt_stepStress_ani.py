@@ -58,7 +58,7 @@ s = s/10**6                     # MPaスケール
 s_s = s_s/10**6                 # MPaスケール
 s_d = s_d/10**6                 # MPaスケール
 
-fig = plt.figure(figsize=(8,5))
+fig = plt.figure(figsize=(8,5), tight_layout=True)
 ax = fig.add_subplot(111, xlabel='$t$ /s')
 ax.grid()
 title_text = "Voigt model: step stress"
