@@ -13,6 +13,7 @@ def creepComp(E, T, tim):
     for t in tim:
         r = calc_creepComp(E, T, t)
         creepComp.append(r)
+    creepComp = np.array(creepComp)
     return creepComp
 
 def calc_creepFunc(T, t):
@@ -24,6 +25,7 @@ def creepFunc(T, tim):
     for t in tim:
         r = calc_creepFunc(T, t)
         creepFunc.append(r)
+    creepFunc = np.array(creepFunc)
     return creepFunc
 
 def reqParams():
@@ -62,13 +64,15 @@ if __name__=='__main__':
         x1_scaled = timeAxis[1]
         x1_label = r'$t$/$\tau$'
         y1 = creepComp(infMod, retardTime, x1)
-        y1_label = r'$J$($t$) /Pa$^{{-1}}$'
+        y1 *= 10**6             # rescale to MPa
+        y1_label = r'$J$($t$) /MPa$^{{-1}}$'
         label1 = 'Creep compliance (linear)'
         x2 = timeAxis[2]
         x2_scaled = timeAxis[3]
         x2_label = r'log[$t$/$\tau$]'
         creepComp = creepComp(infMod, retardTime, x2)
-        y2 = [np.log10(r) for r in creepComp]
+#       y2 = [np.log10(r) for r in creepComp]   # 初期のバージョン
+        y2 = np.log10(creepComp)                 # creepCompの出力をnp.ndarrayに変更したのでこのように簡単に書ける
         y2_label = r'log[$J$($t$) /Pa$^{{-1}}$]'
         label2 = 'Creep compliance (log)'
         legend_loc='upper left'
@@ -85,7 +89,8 @@ if __name__=='__main__':
         x2_scaled = timeAxis[3]
         x2_label = r'log[$t$/$\tau$]'
         creepFunc = creepFunc(retardTime, x2)
-        y2 = [np.log10(r) for r in creepFunc]
+#       y2 = [np.log10(r) for r in creepFunc]   # 初期のバージョン
+        y2 = np.log10(creepFunc)                 # creepFuncの出力をnp.ndarrayに変更したのでこのように簡単に書ける
         y2_label = r'log[$\psi$($t$)]'
         label2 = 'Creep function (log)'
         legend_loc='upper left'

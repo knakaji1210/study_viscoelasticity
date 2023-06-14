@@ -13,6 +13,7 @@ def relaxMod(E, T, tim):
     for t in tim:
         r = calc_relaxMod(E, T, t)
         relaxMod.append(r)
+    relaxMod = np.array(relaxMod)
     return relaxMod
 
 def calc_relaxFunc(T, t):
@@ -24,6 +25,7 @@ def relaxFunc(T, tim):
     for t in tim:
         r = calc_relaxFunc(T, t)
         relaxFunc.append(r)
+    relaxFunc = np.array(relaxFunc)
     return relaxFunc
 
 def reqParams():
@@ -62,13 +64,15 @@ if __name__=='__main__':
         x1_scaled = timeAxis[1]
         x1_label = r'$t$/$\tau$'
         y1 = relaxMod(insMod, relaxTime, x1)
-        y1_label = r'$E$($t$) /Pa'
+        y1 /= 10**6             # rescale to MPa
+        y1_label = r'$E$($t$) /MPa'
         label1 = 'Relaxation modulus (linear)'
         x2 = timeAxis[2]
         x2_scaled = timeAxis[3]
         x2_label = r'log[$t$/$\tau$]'
         relaxMod = relaxMod(insMod, relaxTime, x2)
-        y2 = [np.log10(r) for r in relaxMod]
+#       y2 = [np.log10(r) for r in relaxMod]    # 初期のバージョン
+        y2 = np.log10(relaxMod)                 # relaxModの出力をnp.ndarrayに変更したのでこのように簡単に書ける
         y2_label = r'log[$E$($t$) /Pa]'
         label2 = 'Relaxation modulus (log)'
         legend_loc='upper right'
@@ -85,7 +89,8 @@ if __name__=='__main__':
         x2_scaled = timeAxis[3]
         x2_label = r'log[$t$/$\tau$]'
         relaxFunc = relaxFunc(relaxTime, x2)
-        y2 = [np.log10(r) for r in relaxFunc]
+#       y2 = [np.log10(r) for r in relaxFunc]    # 初期のバージョン
+        y2 = np.log10(relaxFunc)                 # relaxFuncの出力をnp.ndarrayに変更したのでこのように簡単に書ける
         y2_label = r'log[$\varphi$($t$)]'
         label2 = 'Relaxation function (log)'
         legend_loc='upper left'
