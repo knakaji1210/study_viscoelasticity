@@ -109,7 +109,7 @@ s = s/10**6                     # MPaスケール
 
 samp_max = np.max(samp)
 
-fig = plt.figure(figsize=(8,5))
+fig = plt.figure(figsize=(8,6), tight_layout=True)
 ax = fig.add_subplot(111)
 ax.set_xlim(-1.5*eamp, 1.5*eamp)
 ax.set_ylim(-1.5*samp_max, 1.5*samp_max)

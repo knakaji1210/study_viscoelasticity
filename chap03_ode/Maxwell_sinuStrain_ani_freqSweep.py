@@ -115,7 +115,7 @@ el_d = ed*2*l                              # [m] elongation of dashpot
 # scaling for figure
 s = s/10**6                     # MPaスケール
 
-fig = plt.figure(figsize=(8,5))
+fig = plt.figure(figsize=(8,5), tight_layout=True)
 ax = fig.add_subplot(111, xlabel='$t$ /s')
 ax.grid()
 title_text = "Maxwell model: sinusoidal strain"

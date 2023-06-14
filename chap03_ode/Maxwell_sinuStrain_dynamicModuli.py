@@ -129,7 +129,7 @@ s = s/10**6                     # MPaスケール
 
 samp_max = np.max(samp)
 
-fig = plt.figure(figsize=(8,5))
+fig = plt.figure(figsize=(8,5), tight_layout=True)
 ax1 = fig.add_subplot(111)
 ax1.grid()
 ax2 = ax1.twinx()
@@ -141,9 +141,9 @@ ax1.set_xscale('log')
 ax1.set_xlabel(r'$\omega_f$ $\tau$')
 if axisoption == "-log":
     ax1.set_ylim(10**2, 10**6)
-    ax1.set_ylabel(r'log($E^{{\prime}}$ /Pa)')
+    ax1.set_ylabel(r'storage modulus, $E^{{\prime}}$ /Pa')
     ax2.set_ylim(10**2, 10**6)
-    ax2.set_ylabel(r'log($E^{{\prime\prime}}$ /Pa)')
+    ax2.set_ylabel(r'loss modulus, $E^{{\prime\prime}}$ /Pa')
     ax1.set_yscale('log')
     ax2.set_yscale('log')
 else:

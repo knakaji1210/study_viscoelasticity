@@ -97,7 +97,7 @@ s = s/10**6                     # MPaスケール
 
 samp_max = np.max(samp)
 
-fig = plt.figure(figsize=(8,5))
+fig = plt.figure(figsize=(8,5), tight_layout=True)
 ax1 = fig.add_subplot(111)
 ax1.grid()
 title_text = "Maxwell model: sinusoidal strain"

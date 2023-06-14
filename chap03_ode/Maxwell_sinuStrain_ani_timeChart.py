@@ -109,7 +109,7 @@ s = s/10**6                     # MPaスケール
 
 samp_max = np.max(samp)
 
-fig = plt.figure(figsize=(8,5))
+fig = plt.figure(figsize=(8,5), tight_layout=True)
 ax1 = fig.add_subplot(111)
 ax2 = ax1.twinx()
 ax1.set_ylim(-3*eamp, 3*eamp)
@@ -133,8 +133,9 @@ input, = ax1.plot([], [], 'b', animated=True, label='$\epsilon$ (input)')
 output, = ax2.plot([], [], 'r', animated=True, label='$\sigma$ (output)')
 # ここでは[],[]としているが、下で***.set_data([0, l + x[i]], [0, 0])で実際の値を入れている
 
-ax1.legend(loc="upper right")
-ax2.legend(loc="lower right")
+h1, l1 = ax1.get_legend_handles_labels()
+h2, l2 = ax2.get_legend_handles_labels()
+ax1.legend(h1 + h2, l1 + l2)
 
 samp_template = r'$\sigma_{{amp}}$ = %.2f MPa'
 samp_text = ax1.text(0.35, 0.9, '', transform=ax1.transAxes)
