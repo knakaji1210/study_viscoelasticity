@@ -10,7 +10,7 @@ from matplotlib.animation import FuncAnimation
 テキストの式(1.5)をベースに組み立てる
 '''
 
-def dashpot(e, t, s, eta):
+def dashpot_stepStress(e, t, s, eta):
 # e: strain, s: stress, eta: viscosity
 # ここでは下でargsとしてs=s0を入れてステップ応力を実現
     dedt = s/eta        # (1.21)
@@ -41,7 +41,7 @@ ones = np.ones(len(t_a))
 s = np.concatenate([zeros,ones*s0])
 
 # solution of ODE
-sol = odeint(dashpot, e0, t_a, args=(s0,eta))
+sol = odeint(dashpot_stepStress, e0, t_a, args=(s0,eta))
 e = np.concatenate([zeros,sol[:,0]])            # [] strain
 el = e*l                                        # [m] elongation
 

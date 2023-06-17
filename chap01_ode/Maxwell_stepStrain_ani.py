@@ -10,8 +10,8 @@ from matplotlib.animation import FuncAnimation
 テキストの式(1.12)をベースに組み立てる
 '''
 
-def Maxwell(s, t, E, eta):
-# e: strain, s: stress, E: modulus, eta: viscosity
+def Maxwell_stepStrain(s, t, tau):
+# e: strain, s: stress, tau: retardation time
 # ステップ歪みe=e0を加えるので、式(1.11)のde/dtの項が0となっている
     tau = eta/E                 # retardation time [s]
     dsdt = -s/tau               # (1.12)
@@ -26,10 +26,9 @@ try:
     eta = float(input('viscosity [kPa s] (default = 500.0 kPa s): '))*10**3
 except ValueError:
     eta = 5*10**5               # [Pa s] viscosity
-
-tau = eta/E
-l = 0.1                     # [m] equilibrium length
-w = 0.5                     # ratio of dashpot width
+tau = eta/E                     # [s] retardation time
+l = 0.1                         # [m] equilibrium length
+w = 0.5                         # ratio of dashpot width
 
 # initial condition
 try:
@@ -50,7 +49,7 @@ e = np.concatenate([zeros,ones*e0])
 el = e*2*l                                  # [m] elongation
 
 # solution of ODE
-sol = odeint(Maxwell, s0, t_a, args=(E,eta))
+sol = odeint(Maxwell_stepStrain, s0, t_a, args=(tau,))
 s = np.concatenate([zeros,sol[:,0]])        # [] stress
 integral_s = np.array([s[:k+1].sum()*dt for k in range(len(s))])     # 簡易的なsの積分
 e_s = s/E                                   # strain on spring
@@ -91,7 +90,6 @@ var_text = r'$\epsilon_0$ = {0:.1f}, $E$ = {1:.1f} MPa, $\eta$ = {2:.1f} kPa s'.
 ax.text(0.5, 0.9, var_text, transform=ax.transAxes)
 eq_text = r'd$\sigma$/d$t$ = -$\sigma$/$\tau$'
 ax.text(0.5, 0.8, eq_text, transform=ax.transAxes)
-tau = eta/E
 res_text = r'$\tau$ = {0:.1f} s'.format(tau)
 ax.text(0.5, 0.7, res_text, transform=ax.transAxes)
 ax.text(0.35, 0.25, '$l_0$', transform=ax.transAxes)

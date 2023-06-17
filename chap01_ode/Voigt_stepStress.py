@@ -8,10 +8,9 @@ import matplotlib.pyplot as plt
 テキストの式(1.22)をベースに組み立てる
 '''
 
-def Voigt(e, t, s, E, eta):
-# e: strain, s: stress, eta: viscosity
+def Voigt_stepStress(e, t, s, E, tau):
+# e: strain, s: stress, E: modulus, tau: retardation time
 # ここでは下でargsとしてs=s0を入れてステップ応力を実現
-    tau = eta/E                 # retardation time [s]
     dedt = (s/E - e)/tau      # (1.22)
     return dedt
 
@@ -24,6 +23,7 @@ try:
     eta = float(input('viscosity [kPa s] (default = 500.0 kPa s): '))*10**3
 except ValueError:
     eta = 5*10**5               # [Pa s] viscosity
+tau = eta/E                     # [s] retardation time
 
 # initial condition
 try:
@@ -42,7 +42,7 @@ ones = np.ones(len(t_a))
 s = np.concatenate([zeros,ones*s0])
 
 # solution of ODE
-sol = odeint(Voigt, e0, t_a, args=(s0,E,eta))
+sol = odeint(Voigt_stepStress, e0, t_a, args=(s0,E,tau))
 e = np.concatenate([zeros,sol[:,0]])        # [] strain
 dedt = np.array([0.0]+[(e[k+1]-e[k])/(t[k+1]-t[k]) for k in range(len(e)-1)])     # 簡易的なde/dt
 s_s = E*e                                   # stress on spring
@@ -71,7 +71,6 @@ var_text = r'$\sigma_0$ = {0:.2f} MPa, $E$ = {1:.1f} MPa, $\eta$ = {2:.1f} kPa s
 ax1.text(0.1, 0.9, var_text, transform=ax1.transAxes)
 eq_text = r'd$\epsilon$/d$t$ = ($\sigma_0$/$E$ - $\epsilon$)/$\tau$'
 ax2.text(0.1, 0.9, eq_text, transform=ax2.transAxes)
-tau = eta/E
 res_text = r'$\tau$ = {0:.1f} s'.format(tau)
 ax2.text(0.1, 0.8, res_text, transform=ax2.transAxes)
 

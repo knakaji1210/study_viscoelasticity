@@ -8,10 +8,9 @@ import matplotlib.pyplot as plt
 テキストの式(1.12)をベースに組み立てる
 '''
 
-def Maxwell(s, t, E, eta):
-# e: strain, s: stress, E: modulus, eta: viscosity
+def Maxwell_stepStrain(s, t, tau):
+# e: strain, s: stress, tau: retardation time
 # ステップ歪みe=e0を加えるので、式(1.11)のde/dtの項が0となっている
-    tau = eta/E                 # retardation time [s]
     dsdt = -s/tau               # (1.12)
     return dsdt
 
@@ -24,8 +23,7 @@ try:
     eta = float(input('viscosity [kPa s] (default = 500.0 kPa s): '))*10**3
 except ValueError:
     eta = 5*10**5               # [Pa s] viscosity
-
-tau = eta/E
+tau = eta/E                     # [s] retardation time
 
 # initial condition
 try:
@@ -44,11 +42,11 @@ ones = np.ones(len(t_a))
 e = np.concatenate([zeros,ones*e0])
 
 # solution of ODE
-sol = odeint(Maxwell, s0, t_a, args=(E,eta))
+sol = odeint(Maxwell_stepStrain, s0, t_a, args=(tau,))
 s = np.concatenate([zeros,sol[:,0]])        # [] stress
 integral_s = np.array([s[:k+1].sum()*dt for k in range(len(s))])     # 簡易的なsの積分
 e_s = s/E                                   # strain on spring
-e_d = integral_s/eta                              # strain on dashpot
+e_d = integral_s/eta                        # strain on dashpot
 
 # scaling for figure
 s = s/10**6                     # MPaスケール
