@@ -10,10 +10,9 @@ from matplotlib.animation import FuncAnimation
 テキストの式(1.22)をベースに組み立てる
 '''
 
-def Voigt(e, t, samp, af, eta):
-# e: strain, s: stress, eta: viscosity
+def Voigt_sinuStress(e, t, samp, af, tau):
+# e: strain, s: stress, tau: retardation time
 # ここではsampとafを指定し、この中でsの関数を作り振動応力を実現
-    tau = eta/E                 # retardation time [s]
     s = samp*np.sin(af*t)
     dedt = (s/E - e)/tau        # (1.21)
     return dedt
@@ -31,9 +30,7 @@ try:
     eta = float(input('viscosity [kPa s] (default = 500.0 kPa s): '))*10**3
 except ValueError:
     eta = 5*10**5               # [Pa s] viscosity
-
-tau = eta/E
-
+tau = eta/E                     # [s] retardation time
 l = 0.1                     # [m] equilibrium length
 w = 0.5                     # ratio of dashpot width
 
@@ -61,7 +58,7 @@ s = np.concatenate([zeros,s_a])     # whole stress
 s_last = s[int(0.8*len(s)):]        # 後半部分を抽出（前半は過渡応答を含むから）
 
 # solution of ODE
-sol = odeint(Voigt, e0, t_a, args=(samp,af,eta))
+sol = odeint(Voigt_sinuStress, e0, t_a, args=(samp,af,tau))
 e = np.concatenate([zeros,sol[:,0]])        # [] strain
 e_last = e[int(0.8*len(e)):]                # 後半部分を抽出（前半は過渡応答を含むから）
 emax = np.max(e_last)

@@ -8,10 +8,9 @@ import matplotlib.pyplot as plt
 テキストの式(1.11)をベースに組み立てる
 '''
 
-def Maxwell(s, t, eamp, af, E, eta):
-# e: strain, s: stress, E: modulus, eta: viscosity
+def Maxwell_sinuStrain(s, t, eamp, af, E, tau):
+# e: strain, s: stress, E: modulus, tau: relaxation time
 # ここではeampとafを指定し、この中でeの関数を作り振動歪みを実現
-    tau = eta/E                 # retardation time [s]
     e = eamp*np.sin(af*t)
     dedt = eamp*af*np.cos(af*t)
     dsdt = E*dedt-s/tau         # (1.11)
@@ -26,8 +25,7 @@ try:
     eta = float(input('viscosity [kPa s] (default = 500.0 kPa s): '))*10**3
 except ValueError:
     eta = 5*10**5               # [Pa s] viscosity
-
-tau = eta/E
+tau = eta/E                     # [s] relaxation time
 
 # external sinusoidal strain
 try:
@@ -53,7 +51,7 @@ e_a = np.array([eamp*np.sin(af*t) for t in t_a])
 e = np.concatenate([zeros,e_a]) # whole strain
 
 # solution of ODE
-sol = odeint(Maxwell, s0, t_a, args=(eamp,af,E,eta))
+sol = odeint(Maxwell_sinuStrain, s0, t_a, args=(eamp,af,E,tau))
 s = np.concatenate([zeros,sol[:,0]])        # [] stress
 integral_s = np.array([s[:k+1].sum()*dt for k in range(len(s))])     # 簡易的なsの積分
 e_s = s/E                                   # strain on spring

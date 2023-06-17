@@ -10,7 +10,7 @@ from matplotlib.animation import FuncAnimation
 テキストの式(1.5)をベースに組み立てる
 '''
 
-def dashpot(e, t, samp, af, eta):
+def dashpot_sinuStress(e, t, samp, af, eta):
 # e: strain, s: stress, eta: viscosity
 # ここではsampとafを指定し、この中でsの関数を作り振動応力を実現
     s = samp*np.sin(af*t)
@@ -49,7 +49,7 @@ s_a = np.array([samp*np.sin(af*t) for t in t_a])
 s = np.concatenate([zeros,s_a]) # whole stress
 
 # solution of ODE
-sol = odeint(dashpot, e0, t_a, args=(samp,af,eta))
+sol = odeint(dashpot_sinuStress, e0, t_a, args=(samp,af,eta))
 e = np.concatenate([zeros,sol[:,0]])            # [] strain
 el = e*l                                        # [m] elongation
 

@@ -10,10 +10,9 @@ from matplotlib.animation import FuncAnimation
 テキストの式(1.11)をベースに組み立てる
 '''
 
-def Maxwell(s, t, eamp, af, E, eta):
-# e: strain, s: stress, E: modulus, eta: viscosity
+def Maxwell_sinuStrain(s, t, eamp, af, E, tau):
+# e: strain, s: stress, E: modulus, tau: relaxation time
 # ここではeampとafを指定し、この中でeの関数を作り振動歪みを実現
-    tau = eta/E                 # retardation time [s]
     e = eamp*np.sin(af*t)
     dedt = eamp*af*np.cos(af*t)
     dsdt = E*dedt-s/tau         # (1.11)
@@ -32,11 +31,9 @@ try:
     eta = float(input('viscosity [kPa s] (default = 500.0 kPa s): '))*10**3
 except ValueError:
     eta = 5*10**5               # [Pa s] viscosity
-
-tau = eta/E
-
-l = 0.1                     # [m] equilibrium length
-w = 0.5                     # ratio of dashpot width
+tau = eta/E                     # [s] relaxation time
+l = 0.1                         # [m] equilibrium length
+w = 0.5                         # ratio of dashpot width
 
 # external sinusoidal strain
 try:
@@ -47,7 +44,6 @@ try:
     T = float(input('peirod for sinusoidal strain [s] (default=2.0): '))
 except ValueError:
     T = 2.0
-
 af = 2*np.pi/T
 s0 = 0                      # [] initial strain
 
@@ -64,7 +60,7 @@ e_last = e[int(0.8*len(e)):]        # 後半部分を抽出（前半は過渡応
 el = e*2*l                          # [m] elongation
 
 # solution of ODE
-sol = odeint(Maxwell, s0, t_a, args=(eamp,af,E,eta))
+sol = odeint(Maxwell_sinuStrain, s0, t_a, args=(eamp,af,E,tau))
 s = np.concatenate([zeros,sol[:,0]])        # [] stress
 s_last = s[int(0.8*len(s)):]                # 後半部分を抽出（前半は過渡応答を含むから）
 smax = np.max(s_last)

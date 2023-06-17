@@ -29,10 +29,9 @@ else:
 テキストの式(1.11)をベースに組み立てる
 '''
 
-def Maxwell(s, t, eamp, af, E, eta):
-# e: strain, s: stress, E: modulus, eta: viscosity
+def Maxwell_sinuStrain(s, t, eamp, af, E, tau):
+# e: strain, s: stress, E: modulus, tau: relaxation time
 # ここではeampとafを指定し、この中でeの関数を作り振動歪みを実現
-    tau = eta/E                 # retardation time [s]
     e = eamp*np.sin(af*t)
     dedt = eamp*af*np.cos(af*t)
     dsdt = E*dedt-s/tau         # (1.11)
@@ -51,8 +50,7 @@ try:
     eta = float(input('viscosity [kPa s] (default = 500.0 kPa s): '))*10**3
 except ValueError:
     eta = 5*10**5               # [Pa s] viscosity
-
-tau = eta/E
+tau = eta/E                     # [s] relaxation time
 
 # external sinusoidal strain
 try:
@@ -91,7 +89,7 @@ for af in af_list:
     e_af = eamp*np.sin(af*t)   # 入力信号
     e_af_last = e_af[int(0.8*len(e_af)):]             # 後半部分を抽出（前半は過渡応答を含むから）
     e.extend(e_af)                                    # 入力信号（アニメーション用）
-    sol = odeint(Maxwell, s0, t, args=(eamp,af,E,eta))  # ODEの解を求めている
+    sol = odeint(Maxwell_sinuStrain, s0, t, args=(eamp,af,E,tau))  # ODEの解を求めている
     s_af = sol[:, 0]                                  # [s]が出てくる
     s_af_last = s_af[int(0.8*len(s_af)):]             # 後半部分を抽出（前半は過渡応答を含むから）
     s_max = np.max(s_af_last)                         # 後半部分の最大値（最大振幅と見做す）
