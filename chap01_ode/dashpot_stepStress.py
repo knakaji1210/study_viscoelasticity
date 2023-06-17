@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 def dashpot_stepStress(e, t, s, eta):
 # e: strain, s: stress, eta: viscosity
 # ここでは下でargsとしてs=s0を入れてステップ応力を実現
-    dedt = s/eta        # (1.21)
+    dedt = s/eta        # (1.5)
     return dedt
 
 # variables
