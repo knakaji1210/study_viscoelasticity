@@ -79,12 +79,12 @@ for af in af_list:
     ones_list = ones.tolist()  # アニメーション用（各周波数でのアニメーション期間中に同じ数値をずっと表示させるため）
     af_ani.extend([n*af for n in ones_list])  # 入力周波数を格納（アニメーション用）
     e_af = eamp*np.sin(af*t)                  # 入力信号
-    e_af_last = e_af[int(0.8*len(e_af)):]             # 後半部分を抽出（前半は過渡応答を含むから）
+    e_af_stat = e_af[int(0.8*len(e_af)):]             # 後半部分を抽出（前半は過渡応答を含むから）
     e.extend(e_af)                                    # 入力信号（アニメーション用）
     sol = odeint(Maxwell_sinuStrain, s0, t, args=(eamp,af,E,tau))  # ODEの解を求めている
     s_af = sol[:, 0]                                  # [s]が出てくる
-    s_af_last = s_af[int(0.8*len(s_af)):]             # 後半部分を抽出（前半は過渡応答を含むから）
-    s_max = np.max(s_af_last)                         # 後半部分の最大値（最大振幅と見做す）
+    s_af_stat = s_af[int(0.8*len(s_af)):]             # 後半部分を抽出（前半は過渡応答を含むから）
+    s_max = np.max(s_af_stat)                         # 後半部分の最大値（最大振幅と見做す）
     samp.append(s_max/10**6)                          # 最大振幅を格納
     samp_ani.extend([n*s_max/10**6 for n in ones_list])     # 最大振幅を格納（アニメーション用）
     s.extend(s_af)                                    # 出力信号（アニメーション用）
@@ -93,8 +93,8 @@ for af in af_list:
     ed_af = integral_s/eta                           # strain on dashpot
     es.extend(es_af)
     ed.extend(ed_af)  
-    ind = getNearestIndex2value(s_af_last,0)          # 出力信号が0になるindexを抽出
-    s_pha = (180/np.pi)*np.arcsin(np.abs(e_af_last[ind])/eamp)
+    ind = getNearestIndex2value(s_af_stat,0)          # 出力信号が0になるindexを抽出
+    s_pha = (180/np.pi)*np.arcsin(np.abs(e_af_stat[ind])/eamp)
     spha.append(s_pha)                             # 出力位相を格納
     spha_ani.extend([n*s_pha for n in ones_list])   # 最大振幅を格納（アニメーション用） 
 

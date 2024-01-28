@@ -55,17 +55,17 @@ t = np.concatenate([t_b,t_a])   # whole time
 zeros = np.zeros(len(t_b))
 e_a = np.array([eamp*np.sin(af*t) for t in t_a])
 e = np.concatenate([zeros,e_a])     # whole strain
-e_last = e[int(0.8*len(e)):]        # 後半部分を抽出（前半は過渡応答を含むから）
+e_stat = e[int(0.8*len(e)):]        # 後半部分を抽出（前半は過渡応答を含むから）
 # 直列なのでl0=2lとなっている
 el = e*2*l                          # [m] elongation
 
 # solution of ODE
 sol = odeint(Maxwell_sinuStrain, s0, t_a, args=(eamp,af,E,tau))
-s = np.concatenate([zeros,sol[:,0]])        # [] stress
-s_last = s[int(0.8*len(s)):]                # 後半部分を抽出（前半は過渡応答を含むから）
-smax = np.max(s_last)
-ind = getNearestIndex2value(s_last,0)       # 出力信号が0になるindexを抽出
-spha = (180/np.pi)*np.arcsin(np.abs(e_last[ind])/eamp)
+s = np.concatenate([zeros,sol[:,0]])        # [MPa] stress
+s_stat = s[int(0.8*len(s)):]                # 後半部分を抽出（前半は過渡応答を含むから）
+smax = np.max(s_stat)
+ind = getNearestIndex2value(s_stat,0)       # 出力信号が0になるindexを抽出
+spha = (180/np.pi)*np.arcsin(np.abs(e_stat[ind])/eamp)
 integral_s = np.array([s[:k+1].sum()*dt for k in range(len(s))])     # 簡易的なsの積分
 e_s = s/E                                   # strain on spring
 e_d = integral_s/eta                        # strain on dashpot

@@ -55,15 +55,15 @@ t = np.concatenate([t_b,t_a])   # whole time
 zeros = np.zeros(len(t_b))
 s_a = np.array([samp*np.sin(af*t) for t in t_a])
 s = np.concatenate([zeros,s_a])     # whole stress
-s_last = s[int(0.8*len(s)):]        # 後半部分を抽出（前半は過渡応答を含むから）
+s_stat = s[int(0.8*len(s)):]        # 後半部分を抽出（前半は過渡応答を含むから）
 
 # solution of ODE
 sol = odeint(Voigt_sinuStress, e0, t_a, args=(samp,af,tau))
 e = np.concatenate([zeros,sol[:,0]])        # [] strain
-e_last = e[int(0.8*len(e)):]                # 後半部分を抽出（前半は過渡応答を含むから）
-emax = np.max(e_last)
-ind = getNearestIndex2value(e_last,0)       # 出力信号が0になるindexを抽出
-epha = (180/np.pi)*np.arcsin(np.abs(s_last[ind])/samp) 
+e_stat = e[int(0.8*len(e)):]                # 後半部分を抽出（前半は過渡応答を含むから）
+emax = np.max(e_stat)
+ind = getNearestIndex2value(e_stat,0)       # 出力信号が0になるindexを抽出
+epha = (180/np.pi)*np.arcsin(np.abs(s_stat[ind])/samp) 
 dedt = np.array([0.0]+[(e[k+1]-e[k])/(t[k+1]-t[k]) for k in range(len(e)-1)])     # 簡易的なeの微分
 s_s = E*e                                   # stress on spring
 s_d = eta*dedt                              # stress on dashpot
